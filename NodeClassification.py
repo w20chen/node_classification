@@ -4,6 +4,7 @@ from CoraData import *
 from MyGCNNet import *
 from CiteseerData import CiteseerData
 from PPIData import PPIDataFromJson
+from ogbData import *
 
 
 # 本文件不利用pyg，均用手写的函数进行节点分类结果的实现
@@ -164,11 +165,13 @@ if __name__ == '__main__':
     drop_edge = 0.05
     use_pair_norm = True
 
-    # 读取数据
-    dataset_name = "ppi"
+    dataset_name = "ogb"
     path_of_cora = "./cora/cora"
     path_of_citeseer = "./citeseer/citeseer"
     path_of_ppi = "./ppi/ppi"
+    path_of_ogb = "./ogbn-products/products/raw"
+
+    print(f'Reading dataset {dataset_name} from {path_of_ogb}')
 
     dataset = None
     if dataset_name == "cora":
@@ -177,6 +180,8 @@ if __name__ == '__main__':
         dataset = CiteseerData(path_of_citeseer)
     elif dataset_name == "ppi":
         dataset = PPIDataFromJson(path_of_ppi)
+    elif dataset_name == "ogb":
+        dataset = ogbData(path_of_ogb)
 
     num_nodes = dataset.num_nodes
     edge_index = dataset.edge_of_pg
