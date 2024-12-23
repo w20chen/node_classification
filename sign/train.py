@@ -1,4 +1,6 @@
 import argparse
+import matplotlib.pyplot as plt
+import numpy as np
 
 import dgl.function as fn
 import torch
@@ -64,11 +66,16 @@ def train(args):
     val_feats = [feat[val_idx] for feat in features]
     test_feats = [feat[test_idx] for feat in features]
 
+    print(f'train: {len(train_idx)}, val: {len(val_idx)}, test: {len(test_idx)}')
+
     model = SIGN(
         g.ndata['feat'].shape[1], args.num_hidden, num_classes, args.num_hops,
         args.num_layers, args.dropout
     )
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+
+    loss_history = []
+    val_acc_history = []
 
     for epoch in range(args.epochs):
         model.train()
@@ -84,6 +91,9 @@ def train(args):
             epoch, loss, train_acc, val_acc
         ))
 
+        loss_history.append(loss.item())
+        val_acc_history.append(val_acc)
+
     # test
     test_acc = evaluate(model, test_feats, labels[test_idx])
     print('Test Acc {:.4f}'.format(test_acc))
@@ -96,6 +106,9 @@ def train(args):
         'y_pred': model(test_feats).argmax(dim=-1).reshape(-1, 1)
     }))
 
+    # plot
+    plot_loss_with_acc(loss_history, val_acc_history)
+
 
 def evaluate(model, feats, labels):
     model.eval()
@@ -104,19 +117,37 @@ def evaluate(model, feats, labels):
     return accuracy(logits, labels)
 
 
+def plot_loss_with_acc(loss_history, val_acc_history):
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax1.plot(range(len(loss_history)), loss_history, c=np.array([255, 71, 90]) / 255.)
+    plt.ylabel('Loss')
+
+    ax2 = fig.add_subplot(111, sharex=ax1, frameon=False)
+    ax2.plot(range(len(val_acc_history)), val_acc_history, c=np.array([79, 179, 255]) / 255.)
+    ax2.yaxis.tick_right()
+
+    ax2.yaxis.set_label_position("right")
+    plt.ylabel('ValAcc')
+
+    plt.xlabel('Epoch')
+    plt.title('Training Loss & Validation Accuracy')
+    plt.show()
+
+
 def main():
     parser = argparse.ArgumentParser(description='SIGN')
     parser.add_argument('--seed', type=int, default=1, help='random seed')
     parser.add_argument(
-        '--dataset', choices=['cora', 'reddit', 'citeseer', 'ogbn-products'], default='cora', help='dataset'
+        '--dataset', choices=['cora', 'reddit', 'citeseer', 'products'], default='cora', help='dataset'
     )
     parser.add_argument('--ogb-root', default='./ogb', help='root directory to OGB datasets')
     parser.add_argument('--num-hidden', type=int, default=256, help='number of hidden units')
     parser.add_argument('--num_hops', type=int, default=3, help='number of hops')
     parser.add_argument('--num-layers', type=int, default=2, help='number of feed-forward layers')
     parser.add_argument('--dropout', type=float, default=0.5, help='dropout probability')
-    parser.add_argument('--epochs', type=int, default=50, help='number of training epochs')
-    parser.add_argument('--lr', type=float, default=0.003, help='learning rate')
+    parser.add_argument('--epochs', type=int, default=200, help='number of training epochs')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
     parser.add_argument('--weight-decay', type=float, default=0., help='weight decay')
     args = parser.parse_args()
     print(args)
