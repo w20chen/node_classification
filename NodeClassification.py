@@ -5,7 +5,6 @@ from CoraData import *
 from MyGCNNet import *
 from MyGATNet import *
 from CiteseerData import CiteseerData
-from ogbData import *
 
 
 # Generate tensor_adjacency
@@ -131,7 +130,6 @@ if __name__ == '__main__':
 
     path_of_cora = "./cora/cora"
     path_of_citeseer = "./citeseer/citeseer"
-    path_of_ogb = "./ogbn-products/products/raw"
 
     print(f'Reading dataset {dataset_name}...')
 
@@ -140,8 +138,6 @@ if __name__ == '__main__':
         dataset = CoraData(path_of_cora)
     elif dataset_name == "citeseer":
         dataset = CiteseerData(path_of_citeseer)
-    elif dataset_name == "ogb":
-        dataset = ogbData(path_of_ogb)
     else:
         print(f'Invalid dataset name {dataset}')
         exit()
