@@ -47,12 +47,11 @@ class CiteseerData:
                     continue
 
                 # Consider the directed graph as undirected
-                edge_fir = [self.index_of_pg[citing], self.index_of_pg[cited]]
-                edge_sec = [self.index_of_pg[cited], self.index_of_pg[citing]]
-                if edge_fir not in self.edge_of_pg:
-                    self.edge_of_pg.append([self.index_of_pg[citing], self.index_of_pg[cited]])
-                if edge_sec not in self.edge_of_pg:
-                    self.edge_of_pg.append([self.index_of_pg[cited], self.index_of_pg[citing]])
+                edge_1 = [self.index_of_pg[citing], self.index_of_pg[cited]]
+                edge_2 = [self.index_of_pg[cited], self.index_of_pg[citing]]
+                if edge_1 not in self.edge_of_pg:
+                    self.edge_of_pg.append(edge_1)
+                    self.edge_of_pg.append(edge_2)
 
     # Get a sparse adjacency matrix
     def get_adjacent(self):
@@ -67,7 +66,7 @@ class CiteseerData:
         new_edge_of_pg = []
         half_edge_num = int(len(self.edge_of_pg) / 2)
         sampler = np.random.rand(half_edge_num)
-        for i in range(int(half_edge_num)):
+        for i in range(half_edge_num):
             if sampler[i] >= drop_edge:
                 new_edge_of_pg.append(self.edge_of_pg[2 * i])
                 new_edge_of_pg.append(self.edge_of_pg[2 * i + 1])

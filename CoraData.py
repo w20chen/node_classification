@@ -50,7 +50,6 @@ class CoraData:
                 edge_2 = [self.index_of_pg[cited], self.index_of_pg[citing]]
                 if edge_1 not in self.edge_of_pg:
                     self.edge_of_pg.append(edge_1)
-                if edge_2 not in self.edge_of_pg:
                     self.edge_of_pg.append(edge_2)
 
     # Get a sparse adjacency matrix
@@ -67,7 +66,7 @@ class CoraData:
         new_edge_of_pg = []
         half_edge_num = int(len(self.edge_of_pg)/2)
         sampler = np.random.rand(half_edge_num)
-        for i in range(int(half_edge_num)):
+        for i in range(half_edge_num):
             if sampler[i] >= drop_edge:
                 new_edge_of_pg.append(self.edge_of_pg[2 * i])
                 new_edge_of_pg.append(self.edge_of_pg[2 * i + 1])
@@ -134,7 +133,7 @@ def random_adjacent_sampler(edge_of_pg, num_graph_node, drop_edge=0.1, symmetric
         new_edge_of_pg = []
         edge_num = int(len(edge_of_pg))
         sampler = np.random.rand(edge_num)
-        for i in range(int(edge_num)):
+        for i in range(edge_num):
             if sampler[i] >= drop_edge:
                 new_edge_of_pg.append(edge_of_pg[i])
         new_edge_of_pg = np.array(new_edge_of_pg)
@@ -146,7 +145,7 @@ def random_adjacent_sampler(edge_of_pg, num_graph_node, drop_edge=0.1, symmetric
         new_edge_of_pg = []
         half_edge_num = int(len(edge_of_pg) / 2)
         sampler = np.random.rand(half_edge_num)
-        for i in range(int(half_edge_num)):
+        for i in range(half_edge_num):
             if sampler[i] >= drop_edge:
                 new_edge_of_pg.append(edge_of_pg[2 * i])
                 new_edge_of_pg.append(edge_of_pg[2 * i + 1])

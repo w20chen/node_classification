@@ -20,6 +20,7 @@ class ogbData:
         self.num_of_class = len(self.label_set)   # Number of unique classes
         print(f'# of label: {len(self.label_set)}')
         self.feature_dim = len(self.feature_of_pg[0])  # Dimension of node features
+        print(f'feature dim: {self.feature_dim}')
 
     # Load ogb data
     def __dataset_loader(self):
@@ -50,6 +51,7 @@ class ogbData:
                 edge_2 = [int(cited), int(citing)]
                 self.edge_of_pg.append(edge_1)
                 self.edge_of_pg.append(edge_2)
+
         print('Dataset loaded')
 
     # Create a sparse adjacency matrix
@@ -66,7 +68,7 @@ class ogbData:
         new_edge_of_pg = []
         half_edge_num = int(len(self.edge_of_pg)/2)
         sampler = np.random.rand(half_edge_num)
-        for i in range(int(half_edge_num)):
+        for i in range(half_edge_num):
             if sampler[i] >= drop_edge:
                 new_edge_of_pg.append(self.edge_of_pg[2 * i])
                 new_edge_of_pg.append(self.edge_of_pg[2 * i + 1])
@@ -96,9 +98,9 @@ class ogbData:
     # Partition data into training, validation, and test sets
     @staticmethod
     def data_partition_node(data_size=2449029):
-        mask = torch.randperm(data_size)    # Random permutation of indices
-        train_mask = mask[:196615]
-        val_mask = mask[196615:235938]
+        mask = torch.randperm(data_size)
+        train_mask = mask[:1000]
+        val_mask = mask[196615:197615]
         test_mask = mask[235938:2449029]
         return train_mask, val_mask, test_mask
 
